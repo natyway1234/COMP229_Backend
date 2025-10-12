@@ -1,0 +1,8 @@
+Username:- hillsidesplc_db_user
+Password:- YVrOgY9kZP6UR7Iq
+mongodb+srv://hillsidesplc_db_user:YVrOgY9kZP6UR7Iq@cluster0.stsxxsq.mongodb.net/
+
+
+
+
+https://downloads.mongodb.com/compass/mongodb-compass-1.46.11-win32-x64.exe
