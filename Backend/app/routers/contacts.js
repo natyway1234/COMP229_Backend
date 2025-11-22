@@ -15,11 +15,11 @@ router.post('/', contactController.create);
 // PUT update contact by id
 router.put('/:id', contactController.update);
 
+// DELETE all contacts (must come before DELETE /:id)
+router.delete('/', contactController.deleteAll);
+
 // DELETE contact by id
 router.delete('/:id', contactController.delete);
-
-// DELETE all contacts
-router.delete('/', contactController.deleteAll);
 
 module.exports = router;
 

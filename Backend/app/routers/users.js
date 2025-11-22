@@ -15,10 +15,10 @@ router.post('/', userController.create);
 // PUT update user by id
 router.put('/:id', userController.update);
 
+// DELETE all users (must come before DELETE /:id)
+router.delete('/', userController.deleteAll);
+
 // DELETE user by id
 router.delete('/:id', userController.delete);
-
-// DELETE all users
-router.delete('/', userController.deleteAll);
 
 module.exports = router;

@@ -15,11 +15,11 @@ router.post('/', serviceController.create);
 // PUT update service by id
 router.put('/:id', serviceController.update);
 
+// DELETE all services (must come before DELETE /:id)
+router.delete('/', serviceController.deleteAll);
+
 // DELETE service by id
 router.delete('/:id', serviceController.delete);
-
-// DELETE all services
-router.delete('/', serviceController.deleteAll);
 
 module.exports = router;
 

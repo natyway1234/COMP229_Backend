@@ -15,11 +15,11 @@ router.post('/', projectController.create);
 // PUT update project by id
 router.put('/:id', projectController.update);
 
+// DELETE all projects (must come before DELETE /:id)
+router.delete('/', projectController.deleteAll);
+
 // DELETE project by id
 router.delete('/:id', projectController.delete);
-
-// DELETE all projects
-router.delete('/', projectController.deleteAll);
 
 module.exports = router;
 
