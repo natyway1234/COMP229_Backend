@@ -14,8 +14,15 @@ var app = express();
 
 configDb();
 
-// CORS configuration - allow all origins for development
-app.use(cors());
+// CORS configuration - allow requests from frontend
+// In production, you can specify exact origins for better security
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || '*', // Allow all origins by default, or set FRONTEND_URL env var
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 app.use(logger('dev') );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
