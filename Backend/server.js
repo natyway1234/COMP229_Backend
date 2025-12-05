@@ -5,6 +5,7 @@ var logger = require('morgan');
 var configDb = require('./config/db');
 
 var indexRouter = require('./app/routers/index.js');
+var authRouter = require('./app/routers/auth.js');
 var userRouter = require('./app/routers/users.js');
 var contactRouter = require('./app/routers/contacts.js');
 var projectRouter = require('./app/routers/projects.js');
@@ -62,6 +63,7 @@ app.get('/', (req, res) => {
     message: 'Backend API is running',
     endpoints: {
       home: '/api',
+      auth: '/api/auth (signup, signin)',
       contacts: '/api/contacts',
       projects: '/api/projects',
       services: '/api/services',
@@ -73,6 +75,7 @@ app.get('/', (req, res) => {
 
 // API routes
 app.use('/api', indexRouter);
+app.use('/api/auth', authRouter); // Authentication routes (signup, signin)
 app.use('/api/users', userRouter);
 app.use('/api/contacts', contactRouter);
 app.use('/api/projects', projectRouter);
