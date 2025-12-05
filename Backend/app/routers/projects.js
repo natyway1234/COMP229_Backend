@@ -2,24 +2,25 @@ var express = require('express');
 var router = express.Router();
 
 var projectController = require('../controllers/projects');
+var authMiddleware = require('../middleware/auth');
 
-// GET all projects
+// GET all projects (public)
 router.get('/', projectController.list);
 
-// GET project by id
+// GET project by id (public)
 router.get('/:id', projectController.getById);
 
-// POST create new project
-router.post('/', projectController.create);
+// POST create new project (requires authentication)
+router.post('/', authMiddleware.requireAuth, projectController.create);
 
-// PUT update project by id
-router.put('/:id', projectController.update);
+// PUT update project by id (requires authentication)
+router.put('/:id', authMiddleware.requireAuth, projectController.update);
 
-// DELETE all projects (must come before DELETE /:id)
-router.delete('/', projectController.deleteAll);
+// DELETE all projects (requires authentication)
+router.delete('/', authMiddleware.requireAuth, projectController.deleteAll);
 
-// DELETE project by id
-router.delete('/:id', projectController.delete);
+// DELETE project by id (requires authentication)
+router.delete('/:id', authMiddleware.requireAuth, projectController.delete);
 
 module.exports = router;
 

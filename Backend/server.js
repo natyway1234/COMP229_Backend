@@ -5,6 +5,7 @@ var logger = require('morgan');
 var configDb = require('./config/db');
 
 var indexRouter = require('./app/routers/index.js');
+var authRouter = require('./app/routers/auth.js');
 var userRouter = require('./app/routers/users.js');
 var contactRouter = require('./app/routers/contacts.js');
 var projectRouter = require('./app/routers/projects.js');
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Mount index controller under /api so the frontend can be served at root
 app.use('/api', indexRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/contacts', contactRouter);
 app.use('/api/projects', projectRouter);
