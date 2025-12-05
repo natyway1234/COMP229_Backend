@@ -1,10 +1,8 @@
 let jwt = require('jsonwebtoken');
 let UserModel = require('../models/users');
 
-// Middleware to verify JWT token and authenticate user
 module.exports.requireAuth = async function (req, res, next) {
     try {
-        // Get token from Authorization header
         const authHeader = req.headers.authorization;
         
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -14,7 +12,6 @@ module.exports.requireAuth = async function (req, res, next) {
             });
         }
 
-        // Extract token from "Bearer <token>"
         const token = authHeader.split(' ')[1];
 
         if (!token) {
@@ -24,13 +21,11 @@ module.exports.requireAuth = async function (req, res, next) {
             });
         }
 
-        // Verify token
         const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET || 'your-secret-key-change-in-production'
         );
 
-        // Find user by ID from token
         const user = await UserModel.findById(decoded.userId);
         if (!user) {
             return res.status(401).json({
@@ -39,7 +34,6 @@ module.exports.requireAuth = async function (req, res, next) {
             });
         }
 
-        // Attach user info to request object
         req.user = {
             id: user._id,
             email: user.email,

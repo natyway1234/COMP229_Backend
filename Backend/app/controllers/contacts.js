@@ -1,6 +1,5 @@
 let ContactModel = require('../models/contacts');
 
-// GET all contacts
 module.exports.list = async function (req, res, next) {
     try {
         let list = await ContactModel.find();
@@ -11,7 +10,6 @@ module.exports.list = async function (req, res, next) {
     }
 };
 
-// GET contact by id
 module.exports.getById = async function (req, res, next) {
     try {
         let contact = await ContactModel.findById(req.params.id);
@@ -25,7 +23,6 @@ module.exports.getById = async function (req, res, next) {
     }
 };
 
-// POST create new contact
 module.exports.create = async function (req, res, next) {
     try {
         console.log("body: " + JSON.stringify(req.body));
@@ -38,7 +35,6 @@ module.exports.create = async function (req, res, next) {
     }
 };
 
-// PUT update contact by id
 module.exports.update = async function (req, res, next) {
     try {
         let contact = await ContactModel.findByIdAndUpdate(
@@ -56,7 +52,6 @@ module.exports.update = async function (req, res, next) {
     }
 };
 
-// DELETE contact by id
 module.exports.delete = async function (req, res, next) {
     try {
         let contact = await ContactModel.findByIdAndDelete(req.params.id);
@@ -70,7 +65,6 @@ module.exports.delete = async function (req, res, next) {
     }
 };
 
-// DELETE all contacts
 module.exports.deleteAll = async function (req, res, next) {
     try {
         let result = await ContactModel.deleteMany({});

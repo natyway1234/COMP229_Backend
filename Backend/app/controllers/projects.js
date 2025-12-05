@@ -1,6 +1,5 @@
 let ProjectModel = require('../models/projects');
 
-// GET all projects
 module.exports.list = async function (req, res, next) {
     try {
         let list = await ProjectModel.find();
@@ -11,7 +10,6 @@ module.exports.list = async function (req, res, next) {
     }
 };
 
-// GET project by id
 module.exports.getById = async function (req, res, next) {
     try {
         let project = await ProjectModel.findById(req.params.id);
@@ -25,7 +23,6 @@ module.exports.getById = async function (req, res, next) {
     }
 };
 
-// POST create new project
 module.exports.create = async function (req, res, next) {
     try {
         console.log("body: " + JSON.stringify(req.body));
@@ -38,7 +35,6 @@ module.exports.create = async function (req, res, next) {
     }
 };
 
-// PUT update project by id
 module.exports.update = async function (req, res, next) {
     try {
         let project = await ProjectModel.findByIdAndUpdate(
@@ -56,7 +52,6 @@ module.exports.update = async function (req, res, next) {
     }
 };
 
-// DELETE project by id
 module.exports.delete = async function (req, res, next) {
     try {
         let project = await ProjectModel.findByIdAndDelete(req.params.id);
@@ -70,7 +65,6 @@ module.exports.delete = async function (req, res, next) {
     }
 };
 
-// DELETE all projects
 module.exports.deleteAll = async function (req, res, next) {
     try {
         let result = await ProjectModel.deleteMany({});

@@ -2,13 +2,11 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 module.exports = async function(){
-    // Check if already connected
     if (mongoose.connection.readyState === 1) {
         console.log('====> MongoDB already connected');
         return mongoose.connection;
     }
 
-    // Use MONGO_URI from env if provided, otherwise use the existing atlas string, then local
     const envUri = process.env.MONGO_URI;
     const atlasConnection = 'mongodb+srv://hillsidesplc_db_user:Conferencing_4387@cluster0.stsxxsq.mongodb.net/Portfolio?retryWrites=true&w=majority';
     const localConnection = 'mongodb://localhost:27017/Portfolio';
@@ -21,11 +19,10 @@ module.exports = async function(){
     } else {
         console.log('====> Using Atlas connection string');
     }
-    console.log('====> Connection URI:', connectUri.replace(/:[^:@]+@/, ':****@')); // Hide password in logs
+    console.log('====> Connection URI:', connectUri.replace(/:[^:@]+@/, ':****@'));
 
     let mongodb = mongoose.connection;
 
-    // Set up event listeners BEFORE connecting
     mongodb.on('error', (err) => {
         console.error('====> MongoDB Connection Error:', err.message || err);
     });
@@ -47,9 +44,8 @@ module.exports = async function(){
     });
 
     try {
-        // Attempt primary connection
         await mongoose.connect(connectUri, {
-            serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+            serverSelectionTimeoutMS: 10000,
             socketTimeoutMS: 45000,
         });
         console.log('====> MongoDB connection established');

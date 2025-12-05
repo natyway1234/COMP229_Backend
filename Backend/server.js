@@ -13,34 +13,28 @@ var serviceRouter = require('./app/routers/services.js');
 
 var app = express();
 
-// Initialize database connection
 console.log('====> Starting backend server...');
 console.log('====> Initializing database connection...');
 
-// Connect to database (async)
 configDb().catch(err => {
     console.error('====> Failed to connect to database:', err);
     console.error('====> Server will continue but database operations may fail');
 });
 
-// CORS configuration - allow frontend on Render and localhost for development
 const allowedOrigins = [
-  'https://comp229-2025-2olw.onrender.com', // Your Render frontend
-  'http://localhost:5173', // Local development
-  'https://localhost:5173', // Local development (HTTPS)
-  process.env.FRONTEND_URL // Allow environment variable override
-].filter(Boolean); // Remove any undefined values
+  'https://comp229-2025-2olw.onrender.com',
+  'http://localhost:5173',
+  'https://localhost:5173',
+  process.env.FRONTEND_URL
+].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like Postman, curl, or server-to-server)
     if (!origin) return callback(null, true);
     
-    // Check if origin is in allowed list
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      // For development, allow all origins; restrict in production
       if (process.env.NODE_ENV !== 'production') {
         callback(null, true);
       } else {
@@ -56,7 +50,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Root route - API information
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -73,26 +66,21 @@ app.get('/', (req, res) => {
   });
 });
 
-// API routes
 app.use('/api', indexRouter);
-app.use('/api/auth', authRouter); // Authentication routes (signup, signin)
+app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/contacts', contactRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/services', serviceRouter);
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // create the error json
   res.status(err.status || 500);
   res.json(
     {

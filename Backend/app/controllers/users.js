@@ -1,10 +1,9 @@
 let UserModel = require('../models/users');
 let bcrypt = require('bcryptjs');
 
-// GET all users
 module.exports.list = async function (req, res, next) {
     try {
-        let list = await UserModel.find().select('-password'); // Exclude password from response
+        let list = await UserModel.find().select('-password');
         res.json(list);
     } catch (error) {
         console.log(error);
@@ -12,10 +11,9 @@ module.exports.list = async function (req, res, next) {
     }
 };
 
-// GET user by id
 module.exports.getById = async function (req, res, next) {
     try {
-        let user = await UserModel.findById(req.params.id).select('-password'); // Exclude password
+        let user = await UserModel.findById(req.params.id).select('-password');
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
@@ -26,12 +24,10 @@ module.exports.getById = async function (req, res, next) {
     }
 };
 
-// POST create new user
 module.exports.create = async function(req, res, next){
     try {
         console.log("body: " + JSON.stringify(req.body));
         
-        // Hash password if provided
         if (req.body.password) {
             const saltRounds = 10;
             req.body.password = await bcrypt.hash(req.body.password, saltRounds);
@@ -39,7 +35,6 @@ module.exports.create = async function(req, res, next){
         
         let newUser = await UserModel.create(req.body);
         
-        // Remove password from response
         const userResponse = newUser.toObject();
         delete userResponse.password;
         
@@ -51,10 +46,8 @@ module.exports.create = async function(req, res, next){
     }
 };
 
-// PUT update user by id
 module.exports.update = async function (req, res, next) {
     try {
-        // Hash password if provided in update
         if (req.body.password) {
             const saltRounds = 10;
             req.body.password = await bcrypt.hash(req.body.password, saltRounds);
@@ -69,7 +62,6 @@ module.exports.update = async function (req, res, next) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
         
-        // Remove password from response
         const userResponse = user.toObject();
         delete userResponse.password;
         res.json(userResponse);
@@ -79,7 +71,6 @@ module.exports.update = async function (req, res, next) {
     }
 };
 
-// DELETE user by id
 module.exports.delete = async function (req, res, next) {
     try {
         let user = await UserModel.findByIdAndDelete(req.params.id);
@@ -93,7 +84,6 @@ module.exports.delete = async function (req, res, next) {
     }
 };
 
-// DELETE all users
 module.exports.deleteAll = async function (req, res, next) {
     try {
         let result = await UserModel.deleteMany({});

@@ -2,12 +2,10 @@ let UserModel = require('../models/users');
 let bcrypt = require('bcryptjs');
 let jwt = require('jsonwebtoken');
 
-// Sign up (create user with hashed password)
 module.exports.signup = async function (req, res, next) {
     try {
         const { firstname, lastname, email, password } = req.body;
 
-        // Validate required fields
         if (!firstname || !lastname || !email || !password) {
             return res.status(400).json({
                 success: false,
@@ -15,7 +13,6 @@ module.exports.signup = async function (req, res, next) {
             });
         }
 
-        // Check if user already exists
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
@@ -24,11 +21,9 @@ module.exports.signup = async function (req, res, next) {
             });
         }
 
-        // Hash password
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Create new user with hashed password
         const newUser = await UserModel.create({
             firstname,
             lastname,
@@ -36,14 +31,12 @@ module.exports.signup = async function (req, res, next) {
             password: hashedPassword
         });
 
-        // Generate JWT token
         const token = jwt.sign(
             { userId: newUser._id, email: newUser.email },
             process.env.JWT_SECRET || 'your-secret-key-change-in-production',
             { expiresIn: '24h' }
         );
 
-        // Return user data (without password) and token
         res.status(201).json({
             success: true,
             message: 'User created successfully',
@@ -61,12 +54,10 @@ module.exports.signup = async function (req, res, next) {
     }
 };
 
-// Sign in (authenticate user)
 module.exports.signin = async function (req, res, next) {
     try {
         const { email, password } = req.body;
 
-        // Validate required fields
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
@@ -74,7 +65,6 @@ module.exports.signin = async function (req, res, next) {
             });
         }
 
-        // Find user by email
         const user = await UserModel.findOne({ email });
         if (!user) {
             return res.status(401).json({
@@ -83,7 +73,6 @@ module.exports.signin = async function (req, res, next) {
             });
         }
 
-        // Compare password with hashed password
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({
@@ -92,14 +81,12 @@ module.exports.signin = async function (req, res, next) {
             });
         }
 
-        // Generate JWT token
         const token = jwt.sign(
             { userId: user._id, email: user.email },
             process.env.JWT_SECRET || 'your-secret-key-change-in-production',
             { expiresIn: '24h' }
         );
 
-        // Return user data (without password) and token
         res.json({
             success: true,
             message: 'Sign in successful',

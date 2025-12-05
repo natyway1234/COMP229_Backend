@@ -1,6 +1,5 @@
 let ServiceModel = require('../models/services');
 
-// GET all services
 module.exports.list = async function (req, res, next) {
     try {
         let list = await ServiceModel.find();
@@ -11,7 +10,6 @@ module.exports.list = async function (req, res, next) {
     }
 };
 
-// GET service by id
 module.exports.getById = async function (req, res, next) {
     try {
         let service = await ServiceModel.findById(req.params.id);
@@ -25,7 +23,6 @@ module.exports.getById = async function (req, res, next) {
     }
 };
 
-// POST create new service
 module.exports.create = async function (req, res, next) {
     try {
         console.log("body: " + JSON.stringify(req.body));
@@ -38,7 +35,6 @@ module.exports.create = async function (req, res, next) {
     }
 };
 
-// PUT update service by id
 module.exports.update = async function (req, res, next) {
     try {
         let service = await ServiceModel.findByIdAndUpdate(
@@ -56,7 +52,6 @@ module.exports.update = async function (req, res, next) {
     }
 };
 
-// DELETE service by id
 module.exports.delete = async function (req, res, next) {
     try {
         let service = await ServiceModel.findByIdAndDelete(req.params.id);
@@ -70,7 +65,6 @@ module.exports.delete = async function (req, res, next) {
     }
 };
 
-// DELETE all services
 module.exports.deleteAll = async function (req, res, next) {
     try {
         let result = await ServiceModel.deleteMany({});
