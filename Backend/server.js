@@ -22,18 +22,33 @@ configDb().catch(err => {
     console.error('====> Server will continue but database operations may fail');
 });
 
-// CORS configuration - allow frontend running on port 5173
-const corsOptions = {
-  origin: 'http://localhost:5173',
+// CORS configuration - allow all origins for now (you can restrict later)
+// This ensures your frontend on Render can access the backend
+app.use(cors({
+  origin: '*', // Allow all origins - change this to specific URLs in production
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-};
-
-app.use(cors(corsOptions));
+}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Root route - API information
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Backend API is running',
+    endpoints: {
+      home: '/api',
+      contacts: '/api/contacts',
+      projects: '/api/projects',
+      services: '/api/services',
+      users: '/api/users'
+    },
+    version: '1.0.0'
+  });
+});
 
 // API routes
 app.use('/api', indexRouter);
