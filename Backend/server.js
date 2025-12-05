@@ -12,9 +12,15 @@ var serviceRouter = require('./app/routers/services.js');
 
 var app = express();
 
+// Initialize database connection
 console.log('====> Starting backend server...');
 console.log('====> Initializing database connection...');
-configDb();
+
+// Connect to database (async)
+configDb().catch(err => {
+    console.error('====> Failed to connect to database:', err);
+    console.error('====> Server will continue but database operations may fail');
+});
 
 // CORS configuration - allow frontend running on port 5173
 const corsOptions = {

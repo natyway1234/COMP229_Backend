@@ -1,7 +1,13 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-module.exports = function(){
+module.exports = async function(){
+    // Check if already connected
+    if (mongoose.connection.readyState === 1) {
+        console.log('====> MongoDB already connected');
+        return mongoose.connection;
+    }
+
     // Use MONGO_URI from env if provided, otherwise use the existing atlas string, then local
     const envUri = process.env.MONGO_URI;
     const atlasConnection = 'mongodb+srv://hillsidesplc_db_user:Conferencing_4387@cluster0.stsxxsq.mongodb.net/Portfolio?retryWrites=true&w=majority';
@@ -15,22 +21,11 @@ module.exports = function(){
     } else {
         console.log('====> Using Atlas connection string');
     }
-
-    mongoose.connect(connectUri, {
-        // current mongoose v6+ no longer needs these options, but it's harmless
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }).catch(err => {
-        console.error('====> Primary Mongo connection failed:', err.message || err);
-        if (connectUri !== localConnection) {
-            console.log('====> Trying local MongoDB...');
-            return mongoose.connect(localConnection);
-        }
-        throw err;
-    });
+    console.log('====> Connection URI:', connectUri.replace(/:[^:@]+@/, ':****@')); // Hide password in logs
 
     let mongodb = mongoose.connection;
 
+    // Set up event listeners BEFORE connecting
     mongodb.on('error', (err) => {
         console.error('====> MongoDB Connection Error:', err.message || err);
     });
@@ -43,9 +38,39 @@ module.exports = function(){
         console.log('====> MongoDB connected successfully!');
     });
     
+    mongodb.on('disconnected', () => {
+        console.log('====> MongoDB disconnected');
+    });
+    
     mongodb.once('open', () => {
         console.log('====> Connected to MongoDB. Database is ready!');
     });
+
+    try {
+        // Attempt primary connection
+        await mongoose.connect(connectUri, {
+            serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+            socketTimeoutMS: 45000,
+        });
+        console.log('====> MongoDB connection established');
+    } catch (err) {
+        console.error('====> Primary Mongo connection failed:', err.message || err);
+        if (connectUri !== localConnection) {
+            console.log('====> Trying local MongoDB...');
+            try {
+                await mongoose.connect(localConnection, {
+                    serverSelectionTimeoutMS: 5000,
+                    socketTimeoutMS: 45000,
+                });
+                console.log('====> Local MongoDB connection established');
+            } catch (localErr) {
+                console.error('====> Local MongoDB connection also failed:', localErr.message || localErr);
+                throw localErr;
+            }
+        } else {
+            throw err;
+        }
+    }
 
     return mongodb;
 }
