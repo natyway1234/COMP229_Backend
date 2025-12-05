@@ -22,10 +22,31 @@ configDb().catch(err => {
     console.error('====> Server will continue but database operations may fail');
 });
 
-// CORS configuration - allow all origins for now (you can restrict later)
-// This ensures your frontend on Render can access the backend
+// CORS configuration - allow frontend on Render and localhost for development
+const allowedOrigins = [
+  'https://comp229-2025-2olw.onrender.com', // Your Render frontend
+  'http://localhost:5173', // Local development
+  'https://localhost:5173', // Local development (HTTPS)
+  process.env.FRONTEND_URL // Allow environment variable override
+].filter(Boolean); // Remove any undefined values
+
 app.use(cors({
-  origin: '*', // Allow all origins - change this to specific URLs in production
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman, curl, or server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      // For development, allow all origins; restrict in production
+      if (process.env.NODE_ENV !== 'production') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -82,7 +103,9 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('========================================');
   console.log(`====> Backend Server running at http://localhost:${PORT}/`);
-  console.log(`====> CORS enabled for frontend: http://localhost:5173/`);
+  console.log(`====> CORS enabled for:`);
+  console.log(`     - https://comp229-2025-2olw.onrender.com (Render frontend)`);
+  console.log(`     - http://localhost:5173 (Local development)`);
   console.log('====> Waiting for database connection...');
   console.log('========================================');
 });
