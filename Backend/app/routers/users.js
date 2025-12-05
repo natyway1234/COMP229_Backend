@@ -2,24 +2,23 @@ var express = require('express');
 var router = express.Router();
 
 var userController = require('../controllers/users');
-var authMiddleware = require('../middleware/auth');
 
-// GET all users (public)
+// GET all users
 router.get('/', userController.list);
 
-// GET user by id (public)
+// GET user by id
 router.get('/:id', userController.getById);
 
-// POST create new user (public - for signup)
+// POST create new user
 router.post('/', userController.create);
 
-// PUT update user by id (requires authentication)
-router.put('/:id', authMiddleware.requireAuth, userController.update);
+// PUT update user by id
+router.put('/:id', userController.update);
 
-// DELETE all users (requires authentication)
-router.delete('/', authMiddleware.requireAuth, userController.deleteAll);
+// DELETE all users (must come before DELETE /:id)
+router.delete('/', userController.deleteAll);
 
-// DELETE user by id (requires authentication)
-router.delete('/:id', authMiddleware.requireAuth, userController.delete);
+// DELETE user by id
+router.delete('/:id', userController.delete);
 
 module.exports = router;

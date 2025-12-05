@@ -2,25 +2,24 @@ var express = require('express');
 var router = express.Router();
 
 var serviceController = require('../controllers/services');
-var authMiddleware = require('../middleware/auth');
 
-// GET all services (public)
+// GET all services
 router.get('/', serviceController.list);
 
-// GET service by id (public)
+// GET service by id
 router.get('/:id', serviceController.getById);
 
-// POST create new service (requires authentication)
-router.post('/', authMiddleware.requireAuth, serviceController.create);
+// POST create new service
+router.post('/', serviceController.create);
 
-// PUT update service by id (requires authentication)
-router.put('/:id', authMiddleware.requireAuth, serviceController.update);
+// PUT update service by id
+router.put('/:id', serviceController.update);
 
-// DELETE all services (requires authentication)
-router.delete('/', authMiddleware.requireAuth, serviceController.deleteAll);
+// DELETE all services (must come before DELETE /:id)
+router.delete('/', serviceController.deleteAll);
 
-// DELETE service by id (requires authentication)
-router.delete('/:id', authMiddleware.requireAuth, serviceController.delete);
+// DELETE service by id
+router.delete('/:id', serviceController.delete);
 
 module.exports = router;
 
