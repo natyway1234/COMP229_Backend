@@ -13,6 +13,15 @@ var serviceRouter = require('./app/routers/services.js');
 
 var app = express();
 
+// Log route registration for debugging
+console.log('Registering routes...');
+console.log('  - /api (index)');
+console.log('  - /api/auth (authentication)');
+console.log('  - /api/users');
+console.log('  - /api/contacts');
+console.log('  - /api/projects');
+console.log('  - /api/services');
+
 configDb();
 
 // CORS configuration - allow requests from frontend
@@ -35,6 +44,10 @@ app.use('/api/users', userRouter);
 app.use('/api/contacts', contactRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/services', serviceRouter);
+
+// Log successful route registration
+console.log('✅ All routes registered successfully');
+console.log('✅ Auth routes available at: /api/auth/signup and /api/auth/signin');
 
 // Serve frontend static files if the frontend has been built
 const path = require('path');
