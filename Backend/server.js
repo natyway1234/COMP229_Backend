@@ -12,8 +12,6 @@ var serviceRouter = require('./app/routers/services.js');
 
 var app = express();
 
-console.log('====> Starting backend server...');
-console.log('====> Initializing database connection...');
 configDb();
 
 // CORS configuration - allow all origins for development
@@ -22,12 +20,43 @@ app.use(logger('dev') );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// API routes must come BEFORE static file serving
-app.use('/', indexRouter);
+// Mount index controller under /api so the frontend can be served at root
+app.use('/api', indexRouter);
 app.use('/api/users', userRouter);
 app.use('/api/contacts', contactRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/services', serviceRouter);
+
+// Serve frontend static files if the frontend has been built
+const path = require('path');
+const fs = require('fs');
+
+// Common build output locations for different setups
+const possibleClientPaths = [
+  path.join(__dirname, 'frontend', 'dist'),           // usual Vite build inside `frontend`
+  path.join(__dirname, 'frontend', 'client', 'dist'), // earlier projects used frontend/client/dist
+  path.join(__dirname, 'frontend', 'build')           // create-react-app style
+];
+
+let clientDistPath = null;
+for (const p of possibleClientPaths) {
+  if (fs.existsSync(p)) {
+    clientDistPath = p;
+    console.log(`Serving frontend from: ${clientDistPath}`);
+    break;
+  }
+}
+
+if (clientDistPath) {
+  app.use(express.static(clientDistPath));
+
+  // For client-side routing, serve index.html for unknown non-API routes
+  app.get(/^\/(?!api).*$/, function (req, res) {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+} else {
+  console.log('No built frontend detected. Build your frontend into one of: ' + possibleClientPaths.join(', '));
+}
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -52,8 +81,5 @@ app.use(function(err, req, res, next) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log('========================================');
-  console.log(`====> Backend Server running at http://localhost:${PORT}/`);
-  console.log('====> Waiting for database connection...');
-  console.log('========================================');
+  console.log(`Server running at http://localhost:${PORT}/`);
 });
