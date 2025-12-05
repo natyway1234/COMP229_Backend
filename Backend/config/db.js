@@ -4,7 +4,7 @@ require('dotenv').config();
 module.exports = function(){
     // Use MONGO_URI from env if provided, otherwise use the existing atlas string, then local
     const envUri = process.env.MONGO_URI;
-    const atlasConnection = 'mongodb+srv://hillsidesplc_db_user:YVrOgY9kZP6UR7Iq@cluster0.stsxxsq.mongodb.net/Portfolio?retryWrites=true&w=majority';
+    const atlasConnection = 'mongodb+srv://hillsidesplc_db_user:Conferencing_4387@cluster0.stsxxsq.mongodb.net/Portfolio?retryWrites=true&w=majority';
     const localConnection = 'mongodb://localhost:27017/Portfolio';
 
     const connectUri = envUri || atlasConnection;
